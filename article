@@ -1,0 +1,28 @@
+▼GitHubを初めて触る僕が最初の「5時間」でやったこと
+・目的：
+　コーディングの力量を証明するため
+　pythonの学習とその成果を公開
+
+before
+そもそもGitHubのアカウントを取って、そこに掲載するだけっしょ。
+アカウント登録して、さっさとpythonの勉強はじめよっと。
+
+after
+え、リポジトリ？ブランチ？バージョン管理をガチでやる感じなんだ。
+つーかwebじゃなくてローカルでコーディングしたのをUP（プッシュ）する仕組みがあるの？
+Gitというシステムが前提にあるのね。Gitをローカルに入れとくか。
+
+・GitHubとは
+・GitとGitHubの違い
+・アカウント作成
+・GitHub Guides「Hello World」を体験
+　https://guides.github.com/activities/hello-world/
+・Git For Windowsのインストール(version 2.24.0)
+　https://opcdiary.net/technical/programming/%E7%A7%81%E5%AE%B6%E7%89%88-git-for-windows%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%89%8B%E9%A0%86/
+　┗Atom入れてない人は最初に入れとくべし
+　┗MinTTYではなくWindowsDOSにしたよ
+・Git For Windowsの設定
+　https://proengineer.internous.co.jp/content/columnfeature/6918
+・pushしてみる
+　https://techacademy.jp/magazine/6235
+　「git push reject」で検索して対処。
