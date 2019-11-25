@@ -1,3 +1,6 @@
+
+
+------------------------------------------------------
 ▼GitHubを初めて触る僕が最初の「5時間」でやったこと
 ・目的：
 　コーディングの力量を証明するため
@@ -26,3 +29,208 @@ Gitというシステムが前提にあるのね。Gitをローカルに入れ�
 ・pushしてみる
 　https://techacademy.jp/magazine/6235
 　「git push reject」で検索して対処。
+
+------------------------------------------------------
+▼pythonのインストールからHelloWorldまで
+
+
+
+------------------------------------------------------
+▼Pythonを初めて触るところからTodoアプリの作成まで
+・筆者のレベル
+　Pythonを触ったことがない。
+　COBOL2年＞Java1年＞PHP3ヶ月＞Linux少々＞Webアプリ開発少々
+・「progate」
+　レッスン１のみでOK
+　それ以降は課金されてしまう。
+
+・pythonインストール＆「Helloworld」まで
+https://prog-8.com/docs/python-env-win
+※Atomはここで導入しました。めっちゃかっこいい。
+
+まずは練習から
+・まずはDBのこと
+http://www.designmap.info/2016/12/11/python-19/
+
+・サーバーも
+http://www.designmap.info/2016/12/11/python-20/
+僕の場合だと文字化けしてしまったので、以下の1行を削除して、とりあえず前に進みました。
+<meta charset="UTF-8">
+
+・入力フォームありバージョン
+http://www.designmap.info/2016/12/12/python-21/
+全文差し替えじゃなくて、ちゃんと太字を追記でやらないとダメです。
+
+form = cgi.FieldStorage()
+print(form)
+
+「追加」ボタンを押すと、
+FieldStorage(None, None, [MiniFieldStorage('name', 'コーヒー豆を買いにいく'), MiniFieldStorage('mode', 'add')])
+がでない。
+
+明確に定義しないと行けないことを痛感。
+<meta charset="UTF-8">
+だと、文字化けしますが、代わりに以下としました。
+<meta charset="shift-jis">
+
+多分、コマンドプロンプト上でLiteSQLにレコードを追加していった関係で、
+shift-jisで文字列が入っているのかと。
+なので、HTML全体もshift-jisに寄せました。
+
+
+文字列を入れて「追加」を押すと今度は、画面真っ白に。
+テーブルの中身を表示したら、今度はテーブルのほうが文字化け。
+C:\Users\*****\Desktop\アプリ\python\todolist_lesson>python db1.py
+1 ノートを買いにいく
+2 切手を買いにいく
+3 洋服を買いにいく
+4 �R�[�q�[���𔃂�
+
+
+以下で４番目のレコードを削除。
+>>> import sqlite3
+>>> conn = sqlite3.connect('todolist.db')
+>>> curs = conn.cursor()
+>>> curs.execute('select * from tasks')
+<sqlite3.Cursor object at 0x0135AAA0>
+>>> print(curs.fetchall())
+[(1, 'ノートを買いにいく'), (2, '切手を買いにいく'), (3, '洋服を買いにいく'), (4, '�R�[�q�[���\U000140c2�')]
+>>> curs.execute('select * from tasks where id = 4')
+<sqlite3.Cursor object at 0x0135AAA0>
+>>> print(curs.fetchall())
+[(4, '�R�[�q�[���\U000140c2�')]
+>>> curs.execute('delete from tasks where id = 4')
+<sqlite3.Cursor object at 0x0135AAA0>
+>>> curs.execute('select * from tasks')
+<sqlite3.Cursor object at 0x0135AAA0>
+>>> print(curs.fetchall())
+[(1, 'ノートを買いにいく'), (2, '切手を買いにいく'), (3, '洋服を買いにいく')]
+>>>conn.commit()
+>>>
+
+いったん画面復活。
+
+画面から再度入力すると、画面真っ白に。
+>>> curs.execute('select * from tasks')
+<sqlite3.Cursor object at 0x0135AAA0>
+>>> print(curs.fetchall())
+[(1, 'ノートを買いにいく'), (2, '切手を買いにいく'), (3, '洋服を買いにいく'), (5, '�e�X�g')]
+>>>
+
+https://teratail.com/questions/130659
+レコード全部削除。
+これを追加したら治った。
+# -- ↓デフォルトの出力(print)がsjisになっているのをutf-8にする↓ --
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# -- ↑デフォルトの出力(print)がsjisになっているのをutf-8にする↑ --
+
+さらに以下に戻す。
+<meta charset="UTF-8">
+
+
+まとめると。
+
+・コマンドプロンプト上でINSERT⇒sjis
+・画面で入力「追加」⇒utf-8
+・HTML生成(print)⇒sjis
+
+・コマンドプロンプト上でINSERT⇒sjis　※テーブル全レコード削除
+・画面で入力「追加」⇒utf-8
+・HTML生成(print)⇒utf-8　※変更
+
+
+http://www.designmap.info/2016/12/13/python-22/
+簡単。
+
+
+#!/usr/bin/env python3
+import cgi
+import html
+import sqlite3
+
+# -- ↓デフォルトの出力(print)がsjisになっているのをutf-8にする↓ --
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# -- ↑デフォルトの出力(print)がsjisになっているのをutf-8にする↑ --
+
+conn = sqlite3.connect('todolist.db')
+curs = conn.cursor()
+
+
+print('Content-type: text/html')
+print('')
+
+
+def print_html(data=''):
+    print('''\
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>Todoリスト</title>
+    </head>
+    <body>
+    <form action="todo.py" method="post">
+    タスク名<input type="text" name="name">
+    <input type="hidden" name="mode" value="add">
+    <input type="submit" value="追加">
+    </form>
+    <ul>
+    {0}
+    </ul>
+    </body>
+    </html>
+    '''.format(data))
+
+form = cgi.FieldStorage()
+mode = form.getvalue('mode')
+
+if mode == 'add':
+    name = form.getvalue('name')
+    name = html.escape(name)
+
+    sql = ('INSERT INTO tasks(name) VALUES (?)')
+    curs.execute(sql, (name,))
+    conn.commit()
+
+if mode == 'done':
+    id = form.getvalue('id')
+    id = html.escape(id)
+
+    sql = ('DELETE FROM tasks WHERE id = ?')
+    curs.execute(sql, (id,))
+    conn.commit()
+
+curs.execute('SELECT * FROM tasks')
+rows = curs.fetchall()
+
+data = ""
+
+for id, name in rows:
+    data +=  '''
+    <li>{0}
+    <form action="todo.py" method="post">
+    <input type="submit" value="済んだ">
+    <input type="hidden" name="id" value="{1}">
+    <input type="hidden" name="mode" value="done">
+    </form>
+    </li>
+    '''.format(name, id)
+
+print_html(data)
+
+
+
+
+
+
+
+------------------------------------------------------
+▼Python
+
+初心者向けに簡潔にまとめられており、特に「機械学習とデータ分析入門」というセクションには、Pythonのパッケージ(Numpy、Pandas、Matplotlib等)の基本的な使い方がコード付きで説明されています。Pythonによるデータ分析の教科書を買う前に試してみるのもありかと思います。
+https://tutorials.chainer.org/ja/
+------------------------------------------------------
