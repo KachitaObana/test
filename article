@@ -1,34 +1,117 @@
 
+▼Django演習
 
-------------------------------------------------------
-▼GitHubを初めて触る僕が最初の「5時間」でやったこと
-・目的：
-　コーディングの力量を証明するため
-　pythonの学習とその成果を公開
+https://docs.djangoproject.com/ja/2.2/intro/tutorial01/#write-your-first-view
 
-before
-そもそもGitHubのアカウントを取って、そこに掲載するだけっしょ。
-アカウント登録して、さっさとpythonの勉強はじめよっと。
+mysiteプロジェクトを作成
+mysiteディレクトリが作成される。
+django-admin startproject mysite
 
-after
-え、リポジトリ？ブランチ？バージョン管理をガチでやる感じなんだ。
-つーかwebじゃなくてローカルでコーディングしたのをUP（プッシュ）する仕組みがあるの？
-Gitというシステムが前提にあるのね。Gitをローカルに入れとくか。
+mysiteに入って、サーバー起動する
+cd mysite
+py manage.py runserver
 
-・GitHubとは
-・GitとGitHubの違い
-・アカウント作成
-・GitHub Guides「Hello World」を体験
-　https://guides.github.com/activities/hello-world/
-・Git For Windowsのインストール(version 2.24.0)
-　https://opcdiary.net/technical/programming/%E7%A7%81%E5%AE%B6%E7%89%88-git-for-windows%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%89%8B%E9%A0%86/
-　┗Atom入れてない人は最初に入れとくべし
-　┗MinTTYではなくWindowsDOSにしたよ
-・Git For Windowsの設定
-　https://proengineer.internous.co.jp/content/columnfeature/6918
-・pushしてみる
-　https://techacademy.jp/magazine/6235
-　「git push reject」で検索して対処。
+http://127.0.0.1:8000/にアクセス
+ロケットが離陸しているページが出る。
+なぜか最初だけ
+
+
+
+▼Djangoをpipでインストールしたいのにプロキシで弾かれ、やったこと
+
+これの通りにやりたい。
+https://docs.djangoproject.com/ja/2.2/intro/install/
+
+が。
+pip install Django --proxy http://[user:pass]@proxy:port
+いろいろ調べたが、プロキシ通らない。
+基本認証ではなく特殊な認証を行っているためかと思われる。
+
+別環境にpythonをインストール
+https://www.python.jp/install/windows/install_py3.html
+
+念のため、pipをupdate
+python pip install --upgrade pip
+
+いいの見つけた。ダウンロード⇒運ぶ⇒インストールという作戦。
+https://gammasoft.jp/support/pip-install-error/
+
+カレントディレクトリにファイルを入手する
+python -m pip download Django
+
+>python -m pip install --no-index --find-links=django_installer Django
+Looking in links: django_installer
+Collecting Django
+Collecting pytz (from Django)
+Collecting sqlparse (from Django)
+Installing collected packages: pytz, sqlparse, Django
+Successfully installed Django-2.2.7 pytz-2019.3 sqlparse-0.3.0
+
+結局、Djangoに限らず、requests、lxmlなども同じ手順で入れていかないといけないので、今後けっこう地獄。
+
+バージョンを確認
+$ python
+Python 3.8.0 (tags/v3.8.0:fa919fd, Oct 14 2019, 19:21:23) [MSC v.1916 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import django
+>>> print(django.get_version())
+2.2.7
+
+
+▼よく使うコマンド
+○net user (ユーザー名) /domain
+
+net user katsuo /domain
+最終パスワード変更日時               2019/10/08 8:32:20
+パスワード有効期間                   2020/01/06 8:32:20
+
+ほかにも、所属しているセキュリティグループの確認、ができる。
+
+○コマンド
+ping （ホスト名orIP） /t
+
+>ping 10.99.999.99 /t
+10.99.999.99 からの応答: バイト数 =32 時間 =4ms TTL=123
+10.99.999.99 からの応答: バイト数 =32 時間 =4ms TTL=123
+10.99.999.99 からの応答: バイト数 =32 時間 =4ms TTL=123
+要求がタイムアウトしました。
+要求がタイムアウトしました。
+要求がタイムアウトしました。
+10.99.999.99 からの応答: バイト数 =32 時間 =4ms TTL=123
+10.99.999.99 からの応答: バイト数 =32 時間 =4ms TTL=123
+10.99.999.99 からの応答: バイト数 =32 時間 =4ms TTL=123
+
+Cntl+Cで止めること。
+
+○コマンド
+nslookup （ホスト名）
+
+>nslookup HOST-0001
+サーバー:  ADSERVER01.katsuocompany.co.jp
+Address:  10.99.111.1
+
+権限のない回答:
+名前:    HOST-0001.katsuocompany.co.jp
+Address:  10.99.999.99
+
+
+○tracert （ホスト名orIP）
+
+>tracert HOST-0001
+HOST-0001.katsuocompany.co.jp [10.99.999.99] へのルートをトレースしています
+経由するホップ数は最大 30 です:
+
+  1     2 ms     2 ms     2 ms  10.99.999.254
+  2     1 ms     1 ms     1 ms  10.99.128.1
+  3     2 ms     2 ms     2 ms  10.99.128.254
+  4     2 ms     1 ms     1 ms  192.168.10.1
+  5    11 ms     4 ms     4 ms  192.168.1.1
+  6     3 ms     4 ms     4 ms  HOST-0001.katsuocompany.co.jp [10.99.999.99]
+
+トレースを完了しました。
+
+
+
 
 ------------------------------------------------------
 ▼Pythonを初めて触るところからTodoアプリの作成まで
